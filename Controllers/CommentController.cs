@@ -1,6 +1,6 @@
 
 using api.Constants;
-using api.Dtos.Comments;
+using api.Dtos.Comment;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

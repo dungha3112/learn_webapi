@@ -1,5 +1,5 @@
 
-using api.Dtos.Stocks;
+using api.Dtos.Stock;
 using api.Models;
 using AutoMapper;
 

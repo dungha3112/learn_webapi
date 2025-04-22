@@ -1,6 +1,6 @@
 
 
-namespace api.Dtos.Stocks
+namespace api.Dtos.Stock
 {
     public class StockResponse
     {

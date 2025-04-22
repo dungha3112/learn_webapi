@@ -1,6 +1,6 @@
 
 using api.Data;
-using api.Dtos.Comments;
+using api.Dtos.Comment;
 using api.Interfaces;
 using api.Models;
 using AutoMapper;

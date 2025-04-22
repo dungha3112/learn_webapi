@@ -1,5 +1,6 @@
 
 using api.Constants;
+using api.Dtos.Auth;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

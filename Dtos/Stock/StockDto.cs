@@ -1,7 +1,7 @@
 
-using api.Dtos.Comments;
+using api.Dtos.Comment;
 
-namespace api.Dtos.Stocks
+namespace api.Dtos.Stock
 {
     public class StockDto
     {

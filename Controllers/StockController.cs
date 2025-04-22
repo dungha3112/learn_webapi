@@ -1,6 +1,6 @@
 
 using api.Constants;
-using api.Dtos.Stocks;
+using api.Dtos.Stock;
 using api.Helpers;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;

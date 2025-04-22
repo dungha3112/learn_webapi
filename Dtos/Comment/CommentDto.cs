@@ -1,5 +1,5 @@
 
-namespace api.Dtos.Comments
+namespace api.Dtos.Comment
 {
     public class CommentDto
     {
