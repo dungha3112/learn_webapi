@@ -1,9 +1,9 @@
 
 using api.Constants;
 using api.Dtos.Auth;
-using api.Models;
-using Microsoft.AspNetCore.Identity;
+using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace api.Controllers
 {
@@ -11,17 +11,31 @@ namespace api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private UserManager<AppUser> _userManager;
+        private IAuthServices _authServices;
 
-        public AuthController(UserManager<AppUser> userManager)
+        public AuthController(IAuthServices authServices)
         {
-            _userManager = userManager;
+            _authServices = authServices;
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            return Ok();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+
+                var newUser = await _authServices.RegisterAsync(registerDto);
+                // Console.WriteLine(JsonConvert.SerializeObject(newUser, Formatting.Indented));
+                return Ok(newUser);
+
+            }
+            catch (Exception e)
+            {
+
+                return StatusCode(500, "Error register: " + e);
+            }
         }
     }
 }

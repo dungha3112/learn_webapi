@@ -1,6 +1,7 @@
 
 using api.Interfaces;
 using api.Repositories;
+using api.Services;
 
 namespace api.Extensions
 {
@@ -10,6 +11,8 @@ namespace api.Extensions
         {
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<IAuthServices, AuthService>();
+
         }
     }
 }
