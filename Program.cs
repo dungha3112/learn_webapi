@@ -12,6 +12,10 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 // add Dependency Injection
 builder.Services.AddApplicationServices();
+// Identity JWT
+builder.Services.AddIdentityServices();
+// authentication middleware
+builder.Services.AddAuthenticationServices(builder.Configuration);
 
 
 // auto mappers
@@ -19,7 +23,6 @@ builder.Services.AddApplicationServices();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -40,6 +43,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Add authen & author
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 

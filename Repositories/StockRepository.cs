@@ -27,7 +27,7 @@ namespace api.Repositories
         public async Task<StockResponse> GetAllAsync(StockQueryObject query)
         {
 
-            var totalItems = _context.Stocks.Count();
+            var totalItems = await _context.Stocks.CountAsync();
             var totalPage = (int)Math.Ceiling(totalItems / (double)query.PageSize);
 
             var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable();
@@ -71,7 +71,11 @@ namespace api.Repositories
                 };
             }
 
-            var result = await stocks.ToListAsync();
+            // Pagination
+            var skip = (query.PageNumber - 1) * query.PageSize;
+
+
+            var result = await stocks.Skip(skip).Take(query.PageSize).ToListAsync();
             var stockDtos = _mapper.Map<List<StockDto>>(result);
 
             var response = new StockResponse
