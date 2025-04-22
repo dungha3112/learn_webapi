@@ -1,6 +1,7 @@
 
 using api.Data;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using AutoMapper;
@@ -23,25 +24,31 @@ namespace api.Repositories
         /*
             get all
         */
-        public async Task<StockResponse> GetAllAsync(int page, int pageSize)
+        public async Task<StockResponse> GetAllAsync(StockQueryObject query)
         {
-            if (page <= 0) page = 1;
-            if (pageSize <= 0) pageSize = 3;
+
             var totalItems = _context.Stocks.Count();
-            var totalPage = (int)Math.Ceiling(totalItems / (double)pageSize);
+            var totalPage = (int)Math.Ceiling(totalItems / (double)query.PageSize);
 
+            var stocks = _context.Stocks.Include(c => c.Comments).AsQueryable();
 
-            var stocks = await _context.Stocks
-                        .Skip((page - 1) * pageSize)
-                        .Take(pageSize)
-                        .Include(c => c.Comments)
-                        .ToListAsync();
-            var stockDtos = _mapper.Map<List<StockDto>>(stocks);
+            if (!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                stocks = stocks.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+
+            var result = await stocks.ToListAsync();
+            var stockDtos = _mapper.Map<List<StockDto>>(result);
 
             var response = new StockResponse
             {
-                CurrentPage = page,
-                PageSize = pageSize,
+                CurrentPage = query.PageNumber,
+                PageSize = query.PageSize,
                 TotalItems = totalItems,
                 TotalPage = totalPage,
                 Stocks = stockDtos

@@ -1,6 +1,7 @@
 
 using api.Constants;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,11 +20,11 @@ namespace api.Controllers
 
         //GET /api/stocks?page=2&pageSize=5
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 3)
+        public async Task<IActionResult> GetAll([FromQuery] StockQueryObject query)
         {
             // if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var response = await _stockRepository.GetAllAsync(page, pageSize);
+            var response = await _stockRepository.GetAllAsync(query);
             return Ok(response);
 
         }
@@ -68,6 +69,9 @@ namespace api.Controllers
             if (deletedStock == null) return NotFound("Stock Id not found");
 
             return Ok(deletedStock);
+
         }
     }
+
+
 }
