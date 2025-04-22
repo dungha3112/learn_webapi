@@ -1,6 +1,6 @@
 
 using api.Data;
-using api.Dtos.Stock;
+using api.Dtos.Stocks;
 using api.Helpers;
 using api.Interfaces;
 using api.Models;

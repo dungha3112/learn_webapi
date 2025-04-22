@@ -1,6 +1,5 @@
 
 using api.Data;
-using api.Dtos.Comment;
 using api.Dtos.Comments;
 using api.Interfaces;
 using api.Models;

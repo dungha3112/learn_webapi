@@ -1,5 +1,5 @@
 
-using api.Dtos.Stock;
+using api.Dtos.Stocks;
 using api.Helpers;
 using api.Models;
 

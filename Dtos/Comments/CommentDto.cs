@@ -1,8 +1,5 @@
 
-
-using api.Models;
-
-namespace api.Dtos.Comment
+namespace api.Dtos.Comments
 {
     public class CommentDto
     {

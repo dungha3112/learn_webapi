@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace api.Controllers
 {
 
-    [Route(RouteConstants.Comments)]
+    [Route(RouteConstants.COMMENTS)]
     [ApiController]
     public class CommentController : ControllerBase
     {

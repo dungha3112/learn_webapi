@@ -1,13 +1,13 @@
 
 using api.Constants;
-using api.Dtos.Stock;
+using api.Dtos.Stocks;
 using api.Helpers;
 using api.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
-    [Route(RouteConstants.Stocks)]
+    [Route(RouteConstants.STOCKS)]
     [ApiController]
     public class StockController : ControllerBase
     {
