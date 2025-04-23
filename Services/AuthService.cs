@@ -7,6 +7,7 @@ using api.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace api.Services
@@ -16,14 +17,43 @@ namespace api.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AuthService(UserManager<AppUser> userManager, IMapper mapper, ITokenService tokenService)
+        public AuthService(
+            UserManager<AppUser> userManager, IMapper mapper,
+            ITokenService tokenService, SignInManager<AppUser> signInManager
+        )
         {
             _userManager = userManager;
             _mapper = mapper;
             _tokenService = tokenService;
+            _signInManager = signInManager;
         }
 
+        /*
+            Login
+        **/
+        public async Task<UserDto> LoginAsync(LoginDto loginDto)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.UserName);
+            if (user == null) throw new UnauthorizedAccessException("Invalid username.");
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded) throw new UnauthorizedAccessException("Username not found and/or password incorrect");
+
+            var token = _tokenService.CreateToken(user);
+
+            var userDto = _mapper.Map<UserDto>(user, opt =>
+            {
+                opt.Items["Token"] = token;
+            });
+
+            return userDto;
+        }
+
+        /*
+            RegisterAsync
+        **/
         public async Task<UserDto> RegisterAsync(RegisterDto registerDto)
         {
             var existingUser = await _userManager.FindByEmailAsync(registerDto.Email!);

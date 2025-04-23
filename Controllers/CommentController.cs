@@ -2,6 +2,7 @@
 using api.Constants;
 using api.Dtos.Comment;
 using api.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -9,6 +10,7 @@ namespace api.Controllers
 
     [Route(RouteConstants.COMMENTS)]
     [ApiController]
+    [Authorize]
     public class CommentController : ControllerBase
     {
         private readonly ICommentRepository _commentRepository;

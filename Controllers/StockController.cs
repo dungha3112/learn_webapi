@@ -3,12 +3,14 @@ using api.Constants;
 using api.Dtos.Stock;
 using api.Helpers;
 using api.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
     [Route(RouteConstants.STOCKS)]
     [ApiController]
+    [Authorize]
     public class StockController : ControllerBase
     {
         private readonly IStockRepository _stockRepository;
