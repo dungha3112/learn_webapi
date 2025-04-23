@@ -1,6 +1,7 @@
 
 using api.Constants;
 using api.Dtos.Comment;
+using api.Extensions;
 using api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,22 +50,24 @@ namespace api.Controllers
         //POST /api/comments/stocks/{stockId}
         public async Task<IActionResult> CreateComment([FromRoute] int stockId, [FromBody] CreateCommentRequestDto commentRequestDto)
         {
+            var appUserId = User.GetUserId();
 
             var stockExists = await _stockRepository.StockExistsAsync(stockId);
             if (!stockExists) return BadRequest("Stock Id does not exists.");
 
-            var commentDto = await _commentRepository.CreateCommentByStockIdAsync(stockId, commentRequestDto);
+            var commentDto = await _commentRepository.CreateCommentByStockIdAsync(stockId, commentRequestDto, appUserId);
 
 
             return CreatedAtAction(nameof(GetById), new { id = commentDto.Id }, commentDto);
         }
 
-        [HttpPut("stocks/{stockId:int}")]
+        [HttpPut("{id:int}")]
         //PUT /api/comments/stocks/{stockId}
-        public async Task<IActionResult> UpdateComment([FromRoute] int stockId, [FromBody] UpdateCommentRequestDto commentRequestDto)
+        public async Task<IActionResult> UpdateComment([FromRoute] int id, [FromBody] UpdateCommentRequestDto commentRequestDto)
         {
+            var appUserId = User.GetUserId();
 
-            var commentDto = await _commentRepository.UpdateCommentByStockIdAsync(stockId, commentRequestDto);
+            var commentDto = await _commentRepository.UpdateCommentByIdAsync(id, commentRequestDto, appUserId);
             if (commentDto == null) return NotFound("Stock Id not found");
 
             return Ok(commentDto);
@@ -75,8 +78,9 @@ namespace api.Controllers
         //PUT /api/comments/id
         public async Task<IActionResult> DeleteComment([FromRoute] int id)
         {
+            var appUserId = User.GetUserId();
 
-            var comment = await _commentRepository.DeleteCommentByIdAsync(id);
+            var comment = await _commentRepository.DeleteCommentByIdAsync(id, appUserId);
             if (comment == null) return NotFound("Comment Id not found");
 
             return Ok(comment);

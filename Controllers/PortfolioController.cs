@@ -14,12 +14,10 @@ namespace api.Controllers
     public class PortfolioController : ControllerBase
     {
         private readonly IPortfolioRepository _portfolioRepository;
-        private readonly IStockRepository _stockRepository;
 
-        public PortfolioController(IPortfolioRepository portfolioRepository, IStockRepository stockRepository)
+        public PortfolioController(IPortfolioRepository portfolioRepository)
         {
             _portfolioRepository = portfolioRepository;
-            _stockRepository = stockRepository;
         }
 
 

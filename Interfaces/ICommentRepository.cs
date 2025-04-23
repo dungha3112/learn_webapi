@@ -9,8 +9,8 @@ namespace api.Interfaces
 
         Task<CommentDto?> GetCommentByIdAsync(int id);
         Task<List<CommentDto>?> GetCommentsByStockIdAsync(int stockId);
-        Task<CommentDto> CreateCommentByStockIdAsync(int stockId, CreateCommentRequestDto bodyCommentDto);
-        Task<CommentDto?> UpdateCommentByStockIdAsync(int stockId, UpdateCommentRequestDto bodyCommentDto);
-        Task<Comments?> DeleteCommentByIdAsync(int id);
+        Task<CommentDto> CreateCommentByStockIdAsync(int stockId, CreateCommentRequestDto bodyCommentDto, string appUserId);
+        Task<CommentDto?> UpdateCommentByIdAsync(int id, UpdateCommentRequestDto bodyCommentDto, string appUserId);
+        Task<Comments?> DeleteCommentByIdAsync(int id, string appUserId);
     }
 }

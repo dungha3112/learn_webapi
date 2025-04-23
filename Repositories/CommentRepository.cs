@@ -23,7 +23,7 @@ namespace api.Repositories
         // Get comment by id
         public async Task<CommentDto?> GetCommentByIdAsync(int id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments.Include(a => a.AppUser).FirstOrDefaultAsync(c => c.Id == id);
             if (comment == null) return null;
 
             var commentDto = _mapper.Map<CommentDto>(comment);
@@ -32,10 +32,13 @@ namespace api.Repositories
         }
 
         // create comment
-        public async Task<CommentDto> CreateCommentByStockIdAsync(int stockId, CreateCommentRequestDto bodyCommentDto)
+        public async Task<CommentDto> CreateCommentByStockIdAsync(int stockId, CreateCommentRequestDto bodyCommentDto, string appUserId)
         {
+            if (appUserId == null) throw new UnauthorizedAccessException("Unauthorized");
+
             var commentModel = _mapper.Map<Comments>(bodyCommentDto);
             commentModel.StockId = stockId;
+            commentModel.AppUserId = appUserId;
 
             await _context.Comments.AddAsync(commentModel);
             await _context.SaveChangesAsync();
@@ -45,10 +48,12 @@ namespace api.Repositories
             return commentDto;
         }
 
-        public async Task<CommentDto?> UpdateCommentByStockIdAsync(int stockId, UpdateCommentRequestDto bodyCommentDto)
+        public async Task<CommentDto?> UpdateCommentByIdAsync(int id, UpdateCommentRequestDto bodyCommentDto, string appUserId)
         {
-            var existingComment = await _context.Comments.FindAsync(stockId);
+            var existingComment = await _context.Comments.FindAsync(id);
             if (existingComment == null) return null;
+
+            if (existingComment.AppUserId != appUserId) throw new UnauthorizedAccessException("You can not update comment.");
 
             existingComment.Content = bodyCommentDto.Content;
             existingComment.Title = bodyCommentDto.Title;
@@ -68,17 +73,19 @@ namespace api.Repositories
                 // .OrderByDescending(c => c.CreatedOn)
                 // .Skip(1)
                 // .Take(3)
+                .Include(c => c.AppUser)
                 .ToListAsync();
 
             var commentDtos = _mapper.Map<List<CommentDto>>(comments);
             return commentDtos;
         }
 
-        public async Task<Comments?> DeleteCommentByIdAsync(int id)
+        public async Task<Comments?> DeleteCommentByIdAsync(int id, string appUserId)
         {
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null) return null;
 
+            if (comment.AppUserId != appUserId) throw new UnauthorizedAccessException("You can not delete comment.");
 
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
