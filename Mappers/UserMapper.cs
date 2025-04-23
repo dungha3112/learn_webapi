@@ -17,7 +17,9 @@ namespace api.Mappers
                 Token = context.Items["Token"]?.ToString() ?? ""
             });
 
-            CreateMap<RegisterDto, AppUser>();
+            CreateMap<RegisterDto, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }
     }
 }

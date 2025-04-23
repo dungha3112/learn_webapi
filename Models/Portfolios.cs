@@ -9,9 +9,9 @@ namespace api.Models
     {
         public string AppUserId { get; set; } = string.Empty;
         public int StockId { get; set; }
-        public AppUser AppUser { get; set; } = new AppUser();
+        public AppUser AppUser { get; set; }
 
-        public Stocks Stock { get; set; } = new Stocks();
+        public Stocks Stock { get; set; }
 
     }
 }

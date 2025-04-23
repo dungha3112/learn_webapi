@@ -59,17 +59,19 @@ namespace api.Services
             var existingUser = await _userManager.FindByEmailAsync(registerDto.Email!);
             if (existingUser != null)
             {
-                throw new ApplicationException("Email already in use.");
+                throw new InvalidOperationException("Email already in use.");
             }
 
             var appUser = _mapper.Map<AppUser>(registerDto);
+            Console.WriteLine("Mapped AppUser:");
+            Console.WriteLine(JsonConvert.SerializeObject(appUser, Formatting.Indented));
             // Console.WriteLine(JsonConvert.SerializeObject(appUser, Formatting.Indented));
 
             var createUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
             if (!createUser.Succeeded)
             {
                 var errors = string.Join("; ", createUser.Errors.Select(e => e.Description));
-                throw new ApplicationException($"User creation failed: {errors}");
+                throw new InvalidOperationException($"User creation failed: {errors}");
             }
 
             // role
@@ -77,7 +79,7 @@ namespace api.Services
             if (!roleResult.Succeeded)
             {
                 var errors = string.Join("; ", roleResult.Errors.Select(e => e.Description));
-                throw new ApplicationException($"User creation failed: {errors}");
+                throw new InvalidOperationException($"User creation failed: {errors}");
             }
 
             var token = _tokenService.CreateToken(appUser);

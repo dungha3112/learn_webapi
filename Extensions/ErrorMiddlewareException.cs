@@ -32,14 +32,14 @@ public class ErrorMiddlewareException
                 statusCode = HttpStatusCode.Unauthorized;  // 401 Unauthorized
                 message = ex.Message;
             }
-            else if (ex is ApplicationException)
+            else if (ex is InvalidOperationException)
             {
                 statusCode = HttpStatusCode.BadRequest;  // 400 Bad Request
                 message = ex.Message;
             }
-            else if (ex is InvalidOperationException)
+            else if (ex is KeyNotFoundException)
             {
-                statusCode = HttpStatusCode.BadRequest;  // 400 Bad Request
+                statusCode = HttpStatusCode.BadRequest;  // 404 Bad Request
                 message = ex.Message;
             }
 

@@ -12,7 +12,6 @@ namespace api.Extensions
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
 
-                // Cấu hình JWT Bearer authentication cho Swagger
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

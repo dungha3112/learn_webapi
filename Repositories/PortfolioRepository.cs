@@ -3,8 +3,6 @@
 using api.Data;
 using api.Interfaces;
 using api.Models;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -13,36 +11,35 @@ namespace api.Repositories
     public class PortfolioRepository : IPortfolioRepository
     {
         private readonly ApplicationDBContext _context;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly IMapper _mapper;
+
         private readonly IStockRepository _stockRepository;
 
-        public PortfolioRepository(ApplicationDBContext context, UserManager<AppUser> userManager, IMapper mapper, IStockRepository stockRepository)
+        public PortfolioRepository(ApplicationDBContext context, IStockRepository stockRepository)
         {
             _context = context;
-            _userManager = userManager;
-            _mapper = mapper;
+
 
             _stockRepository = stockRepository;
         }
 
-        public async Task<Portfolios> AddPortfolioAsync(int stockId, string userName)
+        public async Task<Portfolios> AddPortfolioAsync(int stockId, string appUserId)
         {
-            if (userName == null) throw new UnauthorizedAccessException("Unauthorized");
+            if (appUserId == null) throw new UnauthorizedAccessException("Unauthorized");
 
-            var appUser = await _userManager.FindByNameAsync(userName);
-            if (appUser == null) throw new UnauthorizedAccessException("Unauthorized");
+
+            // Console.WriteLine("----------------- AddPortfolioAsync appuser ---------------");
+            // Console.WriteLine(JsonConvert.SerializeObject(appUser, Formatting.Indented));
 
 
             var stock = await _stockRepository.StockExistsAsync(stockId);
-            if (!stock) throw new DllNotFoundException("Stock symbol not found");
+            if (!stock) throw new KeyNotFoundException("Stock Id not found");
 
-            var checkSymbolExist = await SymbolAlreadyExistsPortfolio(userName, stockId);
+            var checkSymbolExist = await SymbolAlreadyExistsPortfolio(appUserId, stockId);
             if (checkSymbolExist) throw new InvalidOperationException("Can not add same stock to portfolio");
 
             var portfolioModel = new Portfolios
             {
-                AppUserId = appUser.Id,
+                AppUserId = appUserId,
                 StockId = stockId,
             };
 
@@ -54,9 +51,9 @@ namespace api.Repositories
             return portfolioModel;
         }
 
-        public async Task<bool> SymbolAlreadyExistsPortfolio(string userName, int stockId)
+        public async Task<bool> SymbolAlreadyExistsPortfolio(string appUserId, int stockId)
         {
-            var userPortfolio = await GetUserPortfolioAsync(userName);
+            var userPortfolio = await GetUserPortfolioAsync(appUserId);
             // Console.WriteLine("-------------------- SymbolAlreadyExistsPortfolio ---------------------");
             // Console.WriteLine(JsonConvert.SerializeObject(userPortfolio, Formatting.Indented));
             // Console.WriteLine("stockId: " + stockId);
@@ -66,18 +63,16 @@ namespace api.Repositories
         }
 
 
-        public async Task<List<Stocks>> GetUserPortfolioAsync(string userName)
+        public async Task<List<Stocks>> GetUserPortfolioAsync(string appUserId)
         {
-            if (userName == null) throw new UnauthorizedAccessException("Unauthorized");
+            if (appUserId == null) throw new UnauthorizedAccessException("Unauthorized");
 
-            var appUser = await _userManager.FindByNameAsync(userName);
-            if (appUser == null) throw new UnauthorizedAccessException("Unauthorized");
 
             // Console.WriteLine("-------------------- app user ---------------------");
             // Console.WriteLine(JsonConvert.SerializeObject(appUser, Formatting.Indented));
 
 
-            var userPortfolio = await _context.Portfolios.Where(u => u.AppUserId == appUser.Id)
+            var userPortfolio = await _context.Portfolios.Where(u => u.AppUserId == appUserId)
                 // .Select(p => p.Stock) // get entity Stock
                 .Select(stock => new Stocks
                 {
@@ -90,13 +85,23 @@ namespace api.Repositories
                     MarketCap = stock.Stock.MarketCap
                 })
                 .ToListAsync();
-            // Console.WriteLine("-------------------- userPortfolio ---------------------");
-            // Console.WriteLine(JsonConvert.SerializeObject(userPortfolio, Formatting.Indented));
-
-            // var userPortfolioDtos = _mapper.Map<List<StockDto>>(userPortfolio);
-            // Console.WriteLine("-------------------- user Portfolio dto ---------------------");
-            // Console.WriteLine(JsonConvert.SerializeObject(userPortfolioDtos, Formatting.Indented));
             return userPortfolio;
+        }
+
+        public async Task<Portfolios?> DeleteortfolioByStockIdAsync(int stockId, string appUserId)
+        {
+            var stock = await _stockRepository.StockExistsAsync(stockId);
+            if (!stock) throw new KeyNotFoundException("Stock Id not found");
+
+            var portfolioModel = await _context.Portfolios.FirstOrDefaultAsync(x => x.AppUserId == appUserId && x.StockId == stockId);
+            if (portfolioModel == null)
+                throw new KeyNotFoundException("Portfolio entry not found");
+
+            _context.Portfolios.Remove(portfolioModel);
+            await _context.SaveChangesAsync();
+
+            return portfolioModel;
+
         }
     }
 }

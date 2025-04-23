@@ -1,6 +1,6 @@
 
+using System.Threading.Tasks;
 using api.Constants;
-using api.Dtos.Portfolio;
 using api.Extensions;
 using api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,7 @@ namespace api.Controllers
 {
     [Route(RouteConstants.PORTFOLIOS)]
     [ApiController]
-
+    [Authorize]
     public class PortfolioController : ControllerBase
     {
         private readonly IPortfolioRepository _portfolioRepository;
@@ -24,25 +24,35 @@ namespace api.Controllers
 
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetUserPortfolio()
         {
 
-            var username = User.GetUsername();
-            Console.WriteLine("username: " + username);
-            var userPortfolio = await _portfolioRepository.GetUserPortfolioAsync(username);
+            var appUserId = User.GetUserId();
+            var userPortfolio = await _portfolioRepository.GetUserPortfolioAsync(appUserId);
             return Ok(userPortfolio);
         }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> AddPortfolio([FromBody] AddPortfolioRequestDto addPortfolioRequest)
+        [HttpPost("stock/{stockId:int}")]
+        // POST api/portfolio/stock/1233
+        public async Task<IActionResult> AddPortfolio([FromRoute] int stockId)
         {
 
-            var username = User.GetUsername();
-            var stock = await _portfolioRepository.AddPortfolioAsync(addPortfolioRequest.StockId, username);
+            var appUserId = User.GetUserId();
+            var appUserPortfolio = await _portfolioRepository.AddPortfolioAsync(stockId, appUserId);
 
-            return Ok(stock);
+            return Ok(appUserPortfolio.Stock);
+        }
+
+        [HttpDelete("stock/{stockId:int}")]
+        // Delete api/portfolio/stock/1233
+
+        public async Task<IActionResult> DeleteortfolioByStockId([FromRoute] int stockId)
+        {
+            var appUserId = User.GetUserId();
+
+            var deleted = await _portfolioRepository.DeleteortfolioByStockIdAsync(stockId, appUserId);
+
+            return NoContent();
         }
     }
 }
