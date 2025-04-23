@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api.Models
 {
+
+    [Table("Stocks")]
     public class Stocks
     {
         public int Id { get; set; }
@@ -16,5 +18,8 @@ namespace api.Models
         public long MarketCap { get; set; }
 
         public List<Comments> Comments { get; set; } = new List<Comments>();
+
+        public List<Portfolios> Portfolios { get; set; } = new List<Portfolios>();
+
     }
 }

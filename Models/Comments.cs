@@ -1,7 +1,11 @@
 
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace api.Models
 {
+
+    [Table("Comments")]
     public class Comments
     {
         public int Id { get; set; }
