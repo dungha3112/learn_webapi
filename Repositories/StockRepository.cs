@@ -143,5 +143,6 @@ namespace api.Repositories
         {
             return await _context.Stocks.AnyAsync(s => s.Id == id);
         }
+
     }
 }

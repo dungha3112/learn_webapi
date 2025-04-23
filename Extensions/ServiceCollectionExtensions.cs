@@ -13,6 +13,7 @@ namespace api.Extensions
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IAuthServices, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         }
     }
 }

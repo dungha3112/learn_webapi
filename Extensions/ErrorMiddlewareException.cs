@@ -37,6 +37,11 @@ public class ErrorMiddlewareException
                 statusCode = HttpStatusCode.BadRequest;  // 400 Bad Request
                 message = ex.Message;
             }
+            else if (ex is InvalidOperationException)
+            {
+                statusCode = HttpStatusCode.BadRequest;  // 400 Bad Request
+                message = ex.Message;
+            }
 
             // Log lỗi
             _logger.LogError(ex, message);

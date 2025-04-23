@@ -8,5 +8,8 @@ namespace api.Constants
 
         public const string AUTH = "api/auth";
 
+        public const string PORTFOLIOS = "api/portfolio";
+
+
     }
 }
