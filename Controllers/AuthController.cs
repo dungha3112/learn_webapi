@@ -11,7 +11,7 @@ namespace api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuthServices _authServices;
+        private readonly IAuthServices _authServices;
 
         public AuthController(IAuthServices authServices)
         {

@@ -16,6 +16,9 @@ namespace api.Extensions
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 8;
+
+
+                // options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -._@+";
             })
             .AddEntityFrameworkStores<ApplicationDBContext>();
 

@@ -10,7 +10,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// add Dependency Injection
+// add Dependency Injection DI
 builder.Services.AddApplicationServices();
 // Identity JWT
 builder.Services.AddIdentityServices();

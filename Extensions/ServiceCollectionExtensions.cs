@@ -12,7 +12,7 @@ namespace api.Extensions
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IAuthServices, AuthService>();
-
+            services.AddScoped<ITokenService, TokenService>();
         }
     }
 }

@@ -13,13 +13,15 @@ namespace api.Services
 {
     public class AuthService : IAuthServices
     {
-        private UserManager<AppUser> _userManager;
-        private IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(UserManager<AppUser> userManager, IMapper mapper)
+        public AuthService(UserManager<AppUser> userManager, IMapper mapper, ITokenService tokenService)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
 
         public async Task<UserDto> RegisterAsync(RegisterDto registerDto)
@@ -48,9 +50,13 @@ namespace api.Services
                 throw new ApplicationException($"User creation failed: {errors}");
             }
 
+            var token = _tokenService.CreateToken(appUser);
 
+            var userDto = _mapper.Map<UserDto>(appUser, opt =>
+            {
+                opt.Items["Token"] = token;
+            });
 
-            var userDto = _mapper.Map<UserDto>(appUser);
             return userDto;
         }
     }

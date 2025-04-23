@@ -10,7 +10,13 @@ namespace api.Mappers
     {
         public UserMapper()
         {
-            CreateMap<AppUser, UserDto>();
+            CreateMap<AppUser, UserDto>().ConstructUsing((src, context) => new UserDto
+            {
+                UserName = src.UserName!,
+                Email = src.Email!,
+                Token = context.Items["Token"]?.ToString() ?? ""
+            });
+
             CreateMap<RegisterDto, AppUser>();
         }
     }
